@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { Discord, Slash, SlashOption } from "discordx";
 import trackEmbed from "../embeds/track.js";
+import errorEmbed from "../embeds/error.js";
 import LinkETrack from "../utils/LinkETrack.js";
 
 @Discord()
@@ -16,8 +17,15 @@ export class Rastrear {
     codigo: string,
     interaction: CommandInteraction
   ){
+    await interaction.deferReply({ephemeral: true})
+
     const instance = new LinkETrack()
     const request = await instance.track(codigo)
-    await interaction.reply({embeds: [trackEmbed(request)]})
+
+    if(typeof request == "string"){
+        return await interaction.followUp({embeds: [errorEmbed(request)]})
+    }
+
+    return await interaction.followUp({embeds: [trackEmbed(request)]})
   }
 }

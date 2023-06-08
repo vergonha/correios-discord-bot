@@ -30,6 +30,11 @@ export default function trackEmbed(rastreio: iRastreio): EmbedBuilder{
         "title": `Resultado da Busca 🔎`,
         "description": `\n**Código**  🚚 : ${rastreio.codigo}\n`,
         "color": 0xff9100,
-        "fields": eventos
+        "fields": eventos,
+        "image": {
+            "url": `https://mundoconectado.com.br/uploads/chamadas/correios_5.jpg`,
+            "height": 640,
+            "width": 252
+          }
       })
 }

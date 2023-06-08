@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "@discordjs/builders";
-import { iRastreio } from "../utils/interfaces";
+import { iRastreio } from "../../utils/interfaces";
 
 export default function trackEmbed(rastreio: iRastreio): EmbedBuilder{
 

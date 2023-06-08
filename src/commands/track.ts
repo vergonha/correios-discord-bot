@@ -1,31 +1,32 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { Discord, Slash, SlashOption } from "discordx";
-import trackEmbed from "../embeds/track.js";
-import errorEmbed from "../embeds/error.js";
+import trackEmbed from "../embeds/track/track.js";
+import errorEmbed from "../embeds/track/error.js";
 import LinkETrack from "../utils/LinkETrack.js";
 
 @Discord()
 export class Rastrear {
-  @Slash({ name: "rastrear", description: "Rastreia sua encomenda pelo código de rastreio!", guilds: ["1008476986320109711"] })
-  async rastrear(
-    @SlashOption({
-        description: "Código de rastreio da encomenda: ",
-        name: "codigo",
-        required: true,
-        type: ApplicationCommandOptionType.String,
-    })
-    codigo: string,
-    interaction: CommandInteraction
-  ){
-    await interaction.deferReply({ephemeral: true})
+    @Slash({ name: "rastrear", description: "Rastreia sua encomenda pelo código de rastreio!", guilds: ["1008476986320109711"] })
+    async rastrear(
+        @SlashOption({
+            description: "Código de rastreio da encomenda: ",
+            name: "codigo",
+            required: true,
+            type: ApplicationCommandOptionType.String,
+        }) 
+        
+        codigo: string,
+        interaction: CommandInteraction
+    ) {
+        await interaction.deferReply({ ephemeral: true })
 
-    const instance = new LinkETrack()
-    const request = await instance.track(codigo)
+        const instance = new LinkETrack()
+        const request = await instance.track(codigo)
 
-    if(typeof request == "string"){
-        return await interaction.followUp({embeds: [errorEmbed(request)]})
+        if(typeof request == "string") {
+            return await interaction.followUp({ embeds: [errorEmbed(request)] })
+        }
+
+        return await interaction.followUp({ embeds: [trackEmbed(request)] })
     }
-
-    return await interaction.followUp({embeds: [trackEmbed(request)]})
-  }
 }

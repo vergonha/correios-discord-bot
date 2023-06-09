@@ -10,6 +10,11 @@ const ProdutoSchema = new Schema({
     codigo: {
         type: String,
         required: true
+    },
+
+    ultimaAtualizacao: {
+        type: String,
+        required: true
     }
 })
 

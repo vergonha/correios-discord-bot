@@ -42,7 +42,7 @@ export class Rastrear {
 
 
             user
-                ? await CorreiosDB.update(userID, nome, codigo, time)
+                ? await CorreiosDB.append(userID, nome, codigo, time)
                 : await CorreiosDB.create(userID, nome, codigo, time)
 
             return await interaction.followUp("vai da tdcerto")

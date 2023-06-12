@@ -1,5 +1,5 @@
 import { ChannelType, Client } from "discord.js";
-import trackCodes from "./trackCodes.js";
+import chatUpdates from "./chatUpdates.js";
 
 
 export default async function updates(bot: Client) {
@@ -19,7 +19,7 @@ export default async function updates(bot: Client) {
             const channel = await target.channels.fetch(process.env.UPDATES_CHANNEL)
             if ( channel && channel.type == ChannelType.GuildText ) {
                 // Routine main function in here
-                return await trackCodes(bot, channel)
+                await chatUpdates(bot, channel)
             } else {
                 console.log("Não consegui encontrar o canal com o ID informado. A função de atualização automática será desabilitada.")
                 console.log("Certifique-se de que o grupo está devidamente cacheado.")

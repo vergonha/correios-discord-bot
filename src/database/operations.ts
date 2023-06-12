@@ -14,7 +14,7 @@ const CorreiosDB = {
         return await user.save()
     },
 
-    update: async (id: string, name: string, code: string, time: string) => {
+    append: async (id: string, name: string, code: string, time: string) => {
         return await Usuario.findOneAndUpdate(
             {id: id},
             {
@@ -27,6 +27,26 @@ const CorreiosDB = {
                 }
             }
         )
+    },
+
+    update: async (id: string, name: string, code: string, time: string) => {
+        return await Usuario.findOneAndUpdate(
+            {
+                id: id,
+                codigos: {
+                    $elemMatch: {
+                        codigo: code
+                    }
+                }
+            },
+            {
+                $set: {
+                    "codigos.$.nome": name,
+                    "codigos.$.ultimaAtualizacao": time,
+                    "codigos.$.codigo": code
+                }
+            }
+        ).then(res => console.log(res))
     },
 
     search: async (id: string) => {

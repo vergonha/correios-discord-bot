@@ -2,7 +2,7 @@ import { Client, TextChannel } from "discord.js";
 import LinkETrack from "../utils/LinkETrack.js";
 import CorreiosDB from "../database/operations.js";
 import trackEmbed from "../embeds/track/track.js";
-
+import logger from "../logger.js";
 
 // Essa função mapeia todos os usuários registrados na database e rastreia os códigos registrados.
 export default async function chatUpdates(bot: Client, channel: TextChannel) {
@@ -16,7 +16,7 @@ export default async function chatUpdates(bot: Client, channel: TextChannel) {
             const request = await instance.track(product.codigo)
 
             if(typeof request == "string") {
-                return console.log("Houve um erro ao rastrear o código " + product.codigo)
+                return logger.error("Houve um erro ao rastrear o código " + product.codigo)
             }
 
             const { data, hora } = request.eventos[0]
@@ -30,7 +30,7 @@ export default async function chatUpdates(bot: Client, channel: TextChannel) {
                 try {
                     await channel.send({embeds: [trackEmbed(request)], content: "Atualização no pacote!"})
                 } catch (error) {
-                    console.log(error)
+                    logger.error(error)
                 }
 
             }

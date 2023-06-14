@@ -2,6 +2,7 @@ import { dirname, importx } from "@discordx/importer";
 import { ChannelType, GuildChannel, Interaction, Message } from "discord.js";
 import { IntentsBitField } from "discord.js";
 import { Client } from "discordx";
+import logger from "./logger.js";
 import connection from "./database/connection.js";
 import dotenv from 'dotenv'
 import updates from "./routine/sendUpdates.js";
@@ -33,7 +34,7 @@ bot.once("ready", async () => {
     await bot.initApplicationCommands();
 
     connection()
-    console.log("everyday i imagine a future where i can be with you 🌸");
+    logger.info("everyday i imagine a future where i can be with you 🌸");
 
     // Function to send package updates every 5 minutes.
     setInterval(async () => {updates(bot)}, 2 * 60 * 1000 /* 5 x 60 seconds x 1000 ms == 5 minutes */ )
@@ -51,7 +52,8 @@ async function run() {
     await importx(`${dirname(import.meta.url)}/{events,commands}/**/*.{ts,js}`);
 
     if(!process.env.DISCORD_TOKEN) {
-        throw Error("Could not find BOT_TOKEN in your environment");
+        logger.error("Token do Discord Bot não encontrado.")
+        throw Error("Não foi possível encontrar o Token do Discord Bot no seu arquivo .env.");
     }
 
     await bot.login(process.env.DISCORD_TOKEN);

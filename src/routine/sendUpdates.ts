@@ -1,6 +1,6 @@
 import { ChannelType, Client } from "discord.js";
 import chatUpdates from "./chatUpdates.js";
-
+import logger from "../logger.js";
 
 export default async function updates(bot: Client) {
     const guilds = await bot.guilds.fetch();
@@ -10,7 +10,7 @@ export default async function updates(bot: Client) {
         const target = await bot.guilds.fetch(id)
 
         if(!process.env.UPDATES_CHANNEL){
-            console.log("O ID do canal para enviar atualizações do rastreio não foi encontrado. A função será desabilitada.")
+            logger.error("O ID do canal para enviar atualizações do rastreio não foi encontrado. A função será desabilitada.")
             return
         }
 
@@ -20,8 +20,8 @@ export default async function updates(bot: Client) {
                 // Routine main function in here
                 await chatUpdates(bot, channel)
             } else {
-                console.log("Não consegui encontrar o canal com o ID informado. A função de atualização automática será desabilitada.")
-                console.log("Certifique-se de que o grupo está devidamente cacheado.")
+                logger.error("Não consegui encontrar o canal com o ID informado. A função de atualização automática será desabilitada.")
+                logger.error("Certifique-se de que o grupo está devidamente cacheado.")
                 return
             }
         } catch (e) {
@@ -30,8 +30,8 @@ export default async function updates(bot: Client) {
                 return
             }
 
-            console.log("Houve um erro ao tentar encontrar as informações do canal de atualizações.")
-            console.log(e)
+            logger.error("Houve um erro ao tentar encontrar as informações do canal de atualizações.")
+            logger.error(e)
             return
         }
 

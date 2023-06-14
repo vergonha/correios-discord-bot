@@ -46,7 +46,7 @@ const CorreiosDB = {
                     "codigos.$.codigo": code
                 }
             }
-        ).then(res => console.log(res))
+        )
     },
 
     search: async (id: string) => {

@@ -3,6 +3,7 @@ import { Discord, Slash, SlashOption } from "discordx";
 import CorreiosDB from "../database/operations.js";
 import errorEmbed from "../embeds/track/error.js";
 import LinkETrack from "../utils/LinkETrack.js";
+import logger from "../logger.js";
 
 @Discord()
 export class Rastrear {
@@ -19,7 +20,7 @@ export class Rastrear {
             required: true,
             type: ApplicationCommandOptionType.String,
         })
-        
+
         codigo: string,
         nome: string,
         interaction: CommandInteraction
@@ -47,7 +48,7 @@ export class Rastrear {
 
             return await interaction.followUp("vai da tdcerto")
         } catch (error) {
-            console.log(error)
+            logger.error(error)
         }
     }
 }

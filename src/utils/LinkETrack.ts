@@ -1,6 +1,7 @@
 import axios, { isAxiosError } from 'axios'
 import dotenv from 'dotenv'
 import { iRastreio } from './interfaces'
+import logger from '../logger.js'
 
 dotenv.config()
 
@@ -11,7 +12,8 @@ export default class LinkETrack {
 
     constructor(){
         if(!process.env.LINKETRACK_USER || !process.env.LINKETRACK_API_KEY){
-            throw new Error("User or API Key is missing from your .env file.")
+            logger.error("Credenciais de acesso à API não encontradas.")
+            throw new Error("O Usuário ou a API Key está faltando no seu arquivo .env.")
         }
 
         this.user = process.env.LINKETRACK_USER
@@ -32,14 +34,14 @@ export default class LinkETrack {
             const { data } = response
             return data;
         })
-        
+
 
     }
 
     track = async (code: string): Promise<string | iRastreio> => {
         try {
             const response = await this.fetch(code)
-            
+
             if(!response.eventos.length){
                 return "Ainda não há atualização no pacote."
             }
@@ -48,11 +50,11 @@ export default class LinkETrack {
         } catch (err) {
             if(isAxiosError(err)){
                 if(err.response?.data as unknown == "Unauthorized") {
-                
-                    // Quando os substantivos pertencerem a gênero e número diferentes, 
-                    // o adjetivo, exercendo o papel de adjunto adnominal, 
+
+                    // Quando os substantivos pertencerem a gênero e número diferentes,
+                    // o adjetivo, exercendo o papel de adjunto adnominal,
                     // deverá concordar com o mais próximo ou ir para o masculino plural.
-    
+
                     return "Código de rastreio ou credenciais inválidos."
                 }
             }

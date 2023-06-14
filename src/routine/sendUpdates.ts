@@ -3,7 +3,6 @@ import chatUpdates from "./chatUpdates.js";
 
 
 export default async function updates(bot: Client) {
-    console.log("+1")
     const guilds = await bot.guilds.fetch();
     guilds.map(async guild => {
         const id = guild.id
@@ -35,9 +34,9 @@ export default async function updates(bot: Client) {
             console.log(e)
             return
         }
-        
 
-        
+
+
     })
 
 }

@@ -6,10 +6,10 @@ dotenv.config()
 const connectionString = process.env.MONGODB_CONNECTION_STRING
 export default function connection(){
     if(!connectionString){
-        console.log("🍂 Verifique se o seu arquivo .ENV está preenchido corretamente")
+        console.log("🍂 Verifique se o seu arquivo .ENV está preenchido corretamente.")
         process.exit()
     }
-    
+
     mongoose.connect(connectionString)
         .then(_ => {console.log("🌿 Conexão com a database estabelecida.")})
         .catch(err => {

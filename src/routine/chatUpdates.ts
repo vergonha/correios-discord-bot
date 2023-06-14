@@ -1,6 +1,7 @@
 import { Client, TextChannel } from "discord.js";
 import LinkETrack from "../utils/LinkETrack.js";
 import CorreiosDB from "../database/operations.js";
+import trackEmbed from "../embeds/track/track.js";
 
 
 // Essa função mapeia todos os usuários registrados na database e rastreia os códigos registrados.
@@ -27,7 +28,7 @@ export default async function chatUpdates(bot: Client, channel: TextChannel) {
                 await CorreiosDB.update(id, product.nome, product.codigo, time)
 
                 try {
-                    await channel.send("Houve atualização no pacote " + product.codigo)
+                    await channel.send({embeds: [trackEmbed(request)], content: "Atualização no pacote!"})
                 } catch (error) {
                     console.log(error)
                 }

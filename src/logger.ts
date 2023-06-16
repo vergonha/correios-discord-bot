@@ -9,12 +9,12 @@ const customFormat = printf(({ level, message, label, timestamp }) => {
 });
 
 const timezone = () => {
-    return new Date().toLocaleString("BR", { timeZone:  "America/Sao_Paulo"})
+    return new Date().toLocaleString("BR", { timeZone:  "America/Sao_Paulo" })
 }
 
 const logger = winston.createLogger({
     level: "debug",
-    format: combine(label({ label: '✍️' }), timestamp({ format:timezone() }), customFormat),
+    format: combine(label({ label: '✍️' }), timestamp({ format:timezone }), customFormat),
 
     transports: [
         new winston.transports.Console(),

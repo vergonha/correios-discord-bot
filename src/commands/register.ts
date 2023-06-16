@@ -31,6 +31,11 @@ export class Rastrear {
             const userID = interaction.user.id
             const user = await CorreiosDB.search(userID)
 
+            // Checks if track code has already been registered
+            const duplicate = user?.codigos.some( _ => _.codigo === codigo)
+            if(duplicate == true) { return await interaction.followUp("Código já registrado!") }
+
+
             const instance = new LinkETrack()
             const request = await instance.track(codigo)
 

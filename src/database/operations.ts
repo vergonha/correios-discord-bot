@@ -1,4 +1,5 @@
 import Usuario from "./schemas/usuario.js";
+import connection from "./connection.js";
 
 const CorreiosDB = {
     create: async (id: string, name: string, code: string, time: string) => {
@@ -49,6 +50,26 @@ const CorreiosDB = {
         )
     },
 
+    delete: async (id: string, code: string) => {
+        return await Usuario.updateOne(
+            {
+                id: id,
+                codigos: {
+                    $elemMatch: {
+                        codigo: code
+                    }
+                }
+            },
+            {
+                $pull: {
+                    codigos: {
+                        codigo: code
+                    }
+                }
+            }, { new: true }
+        )
+    },
+
     search: async (id: string) => {
         const user = await Usuario.findOne({id: id})
         return user
@@ -58,5 +79,6 @@ const CorreiosDB = {
         return Usuario.find({})
     }
 }
+
 
 export default CorreiosDB

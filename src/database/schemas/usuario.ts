@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const ProdutoSchema = new Schema({
     nome: {
         type: String,
-        required: true
+        required: true,
     },
 
     codigo: {

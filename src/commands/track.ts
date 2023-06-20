@@ -6,15 +6,15 @@ import LinkETrack from "../utils/LinkETrack.js";
 
 @Discord()
 export class Rastrear {
-    @Slash({ name: "rastrear", description: "Rastreia sua encomenda pelo código de rastreio!", guilds: ["1008476986320109711"] })
+    @Slash({ name: "rastrear", description: "Rastreia sua encomenda pelo código de rastreio!"})
     async rastrear(
         @SlashOption({
             description: "Código de rastreio da encomenda: ",
             name: "codigo",
             required: true,
             type: ApplicationCommandOptionType.String,
-        }) 
-        
+        })
+
         codigo: string,
         interaction: CommandInteraction
     ) {
@@ -27,6 +27,6 @@ export class Rastrear {
             return await interaction.followUp({ embeds: [errorEmbed(request)] })
         }
 
-        return await interaction.followUp({ embeds: [trackEmbed(request)] })
+        return await interaction.followUp({ embeds: [trackEmbed(request, "Rastreio Anônimo")] })
     }
 }

@@ -15,7 +15,7 @@ const getCodes = async (userId: string) => {
     const roles: any = codes.map(_ => {
         const name = _.nome
         const code = _.codigo
-        return { label: `${name} 📦`, value: code }
+        return { label: `${name} 📦`, value: code, description: code }
     })
 
     return roles
@@ -39,7 +39,7 @@ export class Delete {
         return await interaction.followUp("Código deletado com sucesso!")
     }
 
-    @Slash({ description: "Deleta um código do banco de dados", name: "delete" })
+    @Slash({ description: "Deleta um código do banco de dados", name:"excluir" })
     async myCodes(interaction: CommandInteraction): Promise < unknown > {
         await interaction.deferReply({ ephemeral: true });
         const roles = await getCodes(interaction.user.id)

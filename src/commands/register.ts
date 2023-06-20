@@ -4,10 +4,12 @@ import CorreiosDB from "../database/operations.js";
 import errorEmbed from "../embeds/track/error.js";
 import LinkETrack from "../utils/LinkETrack.js";
 import logger from "../logger.js";
+import successEmbed from "../embeds/register/success.js";
+import alreadyRegisteredEmbed from "../embeds/register/alreadyRegistered.js";
 
 @Discord()
 export class Rastrear {
-    @Slash({ name: "registrar", description: "Registra o seu código de rastreio no banco de dados!", guilds: ["1008476986320109711"] })
+    @Slash({ name: "registrar", description: "Registra o seu código de rastreio no banco de dados!"})
     async rastrear(
         @SlashOption({
             description: "Código de rastreio da encomenda: ",
@@ -33,7 +35,7 @@ export class Rastrear {
 
             // Checks if track code has already been registered
             const duplicate = user?.codigos.some( _ => _.codigo === codigo)
-            if(duplicate == true) { return await interaction.followUp("Código já registrado!") }
+            if(duplicate == true) { return await interaction.followUp({embeds: [alreadyRegisteredEmbed()]}) }
 
 
             const instance = new LinkETrack()
@@ -51,7 +53,7 @@ export class Rastrear {
                 ? await CorreiosDB.append(userID, nome, codigo, time)
                 : await CorreiosDB.create(userID, nome, codigo, time)
 
-            return await interaction.followUp("vai da tdcerto")
+            return await interaction.followUp({embeds: [successEmbed()]})
         } catch (error) {
             logger.error(error)
         }

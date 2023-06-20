@@ -16,7 +16,9 @@ export default async function chatUpdates(bot: Client, channel: TextChannel) {
             const request = await instance.track(product.codigo)
 
             if(typeof request == "string") {
-                return logger.error("Houve um erro ao rastrear o código " + product.codigo)
+                // Enquanto a API estiver instável, essa linha vai ficar comentada.
+                // logger.error("Houve um erro ao rastrear o código " + product.codigo)
+                return
             }
 
             const { data, hora } = request.eventos[0]
@@ -28,7 +30,7 @@ export default async function chatUpdates(bot: Client, channel: TextChannel) {
                 await CorreiosDB.update(id, product.nome, product.codigo, time)
 
                 try {
-                    await channel.send({embeds: [trackEmbed(request)], content: "Atualização no pacote!"})
+                    await channel.send({embeds: [trackEmbed(request, product.nome)], content: "Atualização no pacote!"})
                 } catch (error) {
                     logger.error(error)
                 }

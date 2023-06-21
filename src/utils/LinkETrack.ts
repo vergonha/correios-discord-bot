@@ -46,6 +46,15 @@ export default class LinkETrack {
                 return "Ainda não há atualização no pacote."
             }
 
+
+            // Às vezes a API retorna um <span> no meio do JSON da resposta.
+            // Isso resolve o problema.
+
+            let subStatus = response.eventos[0].subStatus
+            if( /span/.test(subStatus[1]) || /span/.test(subStatus[0]) ){
+                response.eventos[0].subStatus = ["Acesse o ambiente de importações dos correios para verificar o status do pedido: **https://www.correios.com.br/encomendas-logistica/minhas-importacoes/minhas-importacoes**"]
+            }
+
             return response
         } catch (err) {
             if(isAxiosError(err)){

@@ -7,7 +7,16 @@ export default async function updates(bot: Client) {
     guilds.map(async guild => {
         const id = guild.id
         // Target == Complete guild object
-        const target = await bot.guilds.fetch(id)
+        let target
+
+        try {
+            target = await bot.guilds.fetch(id)
+        } catch (error) {
+            logger.error("Houve um erro com o Fetch de Guilds no discord")
+            // Por algum motivo, depois de dias ligado, o discord não retornou as guilds e o bot foi desligado.
+            // Esse shutdown não foi retornado nos logs, agora deve ser.
+            return
+        }
 
         if(!process.env.UPDATES_CHANNEL){
             logger.error("O ID do canal para enviar atualizações do rastreio não foi encontrado. A função será desabilitada.")

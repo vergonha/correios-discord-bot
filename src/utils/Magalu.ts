@@ -3,6 +3,7 @@ import { iMagaluResponse, iRastreio } from "./interfaces"
 import axios, { isAxiosError } from "axios"
 import PacoteInvalidoException from "../exceptions/PacoteInvalidoException"
 import logger from "../logger"
+import ServicoIndisponivelException from "../exceptions/ServicoIndisponivelException"
 
 export default class Magalu {
     private readonly baseURL: string
@@ -27,7 +28,7 @@ export default class Magalu {
         const parser = new JSDOM(html)  
         const props = parser.window.document.querySelector('#__NEXT_DATA__');
 
-        if (!props || props.textContent == null) { throw new Error("Não foi possível encontrar os dados da página.") }
+        if (!props || props.textContent == null) { throw new ServicoIndisponivelException("Não foi possível encontrar os dados da página.") }
 
         const json = JSON.parse(props.innerHTML)
         const { props: { pageProps } } = json
@@ -39,7 +40,7 @@ export default class Magalu {
         const { data } = response
 
         if(!data.length){
-            throw new PacoteInvalidoException("Ainda não há atualização no pacote.")
+            throw new PacoteInvalidoException("Ainda não há atualização no pacote ou o código é inválido.")
         }
 
         const events = data.map(event => {
@@ -69,19 +70,12 @@ export default class Magalu {
 
             return response
         } catch (err) {
-            if (isAxiosError(err)) {
-                if (err.response?.data as unknown == "Unauthorized") 
-
-                    // Quando os substantivos pertencerem a gênero e número diferentes,
-                    // o adjetivo, exercendo o papel de adjunto adnominal,
-                    // deverá concordar com o mais próximo ou ir para o masculino plural.
-
-                    return "Código de rastreio ou credenciais inválidos."
-            }
-
             if(err instanceof PacoteInvalidoException)
                 return err.message
 
+            if(err instanceof ServicoIndisponivelException)
+                return err.message
+            
             logger.error(err)
             return "Ocorreu um erro inesperado."
         }

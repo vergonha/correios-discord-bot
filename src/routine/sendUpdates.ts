@@ -12,9 +12,9 @@ export default async function updates(bot: Client) {
         try {
             target = await bot.guilds.fetch(id)
         } catch (error) {
-            logger.error("Houve um erro com o Fetch de Guilds no discord")
-            // Por algum motivo, depois de dias ligado, o discord não retornou as guilds e o bot foi desligado.
-            // Esse shutdown não foi retornado nos logs, agora deve ser.
+            logger.error("Houve um erro com o Fetch de Guilds no discord")            
+            // By some reason, after days online, discord didn't return the guilds and the bot was shutdown.
+            // This shutdown wasn't returned in the logs, now it should be.
             return
         }
 

@@ -1,9 +1,9 @@
 import { JSDOM } from "jsdom"
 import { iMagaluResponse, iRastreio } from "./interfaces"
 import axios, { isAxiosError } from "axios"
-import PacoteInvalidoException from "../exceptions/PacoteInvalidoException"
-import logger from "../logger"
-import ServicoIndisponivelException from "../exceptions/ServicoIndisponivelException"
+import ServicoIndisponivelException from "../exceptions/ServicoIndisponivelException.js"
+import PacoteInvalidoException from "../exceptions/PacoteInvalidoException.js"
+import logger from "../logger.js"
 
 export default class Magalu {
     private readonly baseURL: string
@@ -75,7 +75,7 @@ export default class Magalu {
 
             if(err instanceof ServicoIndisponivelException)
                 return err.message
-            
+
             logger.error(err)
             return "Ocorreu um erro inesperado."
         }

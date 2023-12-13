@@ -6,7 +6,7 @@
 
 ## 👤 Sobre o Projeto
 
-Esse é um Bot desenvolvido em Typescript feito para rastrear suas encomendas e te notificar quando elas atualizam. Utiliza a API do [Linke&Track](https://Magalu.com/api) para obter as informações do seu pacote.
+Esse é um Bot desenvolvido em Typescript feito para rastrear suas encomendas e te notificar quando elas atualizam. Utiliza a API da Magalu para obter as informações do seu pacote.
 
 Utiliza um banco de dados não relacional chamado [MongoDB](https://www.mongodb.com/) para armazenar e recuperar os dados referentes aos pacotes que você cadastra.
 
@@ -37,8 +37,6 @@ Mude o nome dele para `.env`, removendo o ".example". Em seguida, preencha as in
  ```
 DISCORD_TOKEN= ...
 DISCORD_LOG_WEBHOOK= ...
-Magalu_USER= ...
-Magalu_API_KEY= ...
 MONGODB_CONNECTION_STRING= ...
 UPDATES_CHANNEL= ...
  ```
@@ -47,8 +45,6 @@ Eles devem estar preenchidos corretamente para que a aplicação funcione da for
 
 - Discord Token: É o Token do Bot gerado na sua aplicação no [Painel de Desenvolvedor](https://discord.com/developers/applications) do Discord.
 - Discord Log Webhook: É o [Webhook](https://discord.com/developers/docs/resources/webhook) que a aplicação vai chamar para enviar os logs do seu bot, caso ocorra algum erro durante a execução ou algo parecido, você vai ser alertado através desse webhook.
-- Magalu User: Fornecido pela equipe do Magalu para ter acesso à API de rastreio.
-- Magalu API Key: Fornecido pela equipe do Magalu para ter acesso à API de rastreio.
 - MongoDB Connection String: É a String de conexão com seu banco de dados MongoDB para armazenar os códigos de rastreio e usuários do seu bot.
 - Updates Channel: É o ID do Canal do seu servidor do Discord em que vai chegar a mensagem do Bot caso haja alguma atualização em um dos pacotes registrados.
 

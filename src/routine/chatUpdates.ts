@@ -4,19 +4,19 @@ import CorreiosDB from "../database/operations.js";
 import trackEmbed from "../embeds/track/track.js";
 import logger from "../logger.js";
 
-// Essa função mapeia todos os usuários registrados na database e rastreia os códigos registrados.
+// This function maps all users registered in the database and tracks the registered codes.
 export default async function chatUpdates(bot: Client, channel: TextChannel) {
     const users = await CorreiosDB.all()
     users.map(async user => {
         const instance = new Magalu()
-        // Pega o ID e o objeto de Códigos para cada usuário
+        // Get the ID and the object of Codes for each user
         const { id, codigos } = user
-        // Para cada código registrado, realiza a busca:
         codigos.map( async product => {
             const request = await instance.track(product.codigo)
 
             if(typeof request == "string") {
-                // Enquanto a API estiver instável, essa linha vai ficar comentada.
+
+                // While the API is unstable, this line will be commented.
                 // logger.error("Houve um erro ao rastrear o código " + product.codigo)
                 return
             }
@@ -24,9 +24,9 @@ export default async function chatUpdates(bot: Client, channel: TextChannel) {
             const { data, hora } = request.eventos[0]
             const time = `${data} ${hora}`
 
-            // Leia: se o horário na API for diferente do horário da database, então há atualização
+            // If the API has a different time from the database, then there is an update
             if (time != product.ultimaAtualizacao) {
-                // Atualiza na database para o horário novo
+                // Updates the database with the new time
                 await CorreiosDB.update(id, product.nome, product.codigo, time)
 
                 try {

@@ -6,7 +6,5 @@ services:
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - DISCORD_LOG_WEBHOOK=${DISCORD_LOG_WEBHOOK}
-      - Magalu_USER=${Magalu_USER}
-      - Magalu_API_KEY=${Magalu_API_KEY}
       - MONGODB_CONNECTION_STRING=${MONGODB_CONNECTION_STRING}
       - UPDATES_CHANNEL=${UPDATES_CHANNEL}

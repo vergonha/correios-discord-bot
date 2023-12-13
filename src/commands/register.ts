@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { Discord, Slash, SlashOption } from "discordx";
 import CorreiosDB from "../database/operations.js";
 import errorEmbed from "../embeds/track/error.js";
-import LinkETrack from "../utils/LinkETrack.js";
+import Magalu from "../utils/Magalu.js";
 import logger from "../logger.js";
 import successEmbed from "../embeds/register/success.js";
 import alreadyRegisteredEmbed from "../embeds/register/alreadyRegistered.js";
@@ -38,7 +38,7 @@ export class Rastrear {
             if(duplicate == true) { return await interaction.followUp({embeds: [alreadyRegisteredEmbed()]}) }
 
 
-            const instance = new LinkETrack()
+            const instance = new Magalu()
             const request = await instance.track(codigo)
 
             if(typeof request == "string") {

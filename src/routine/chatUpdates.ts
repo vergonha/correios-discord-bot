@@ -1,5 +1,5 @@
 import { Client, TextChannel } from "discord.js";
-import LinkETrack from "../utils/LinkETrack.js";
+import Magalu from "../utils/Magalu.js";
 import CorreiosDB from "../database/operations.js";
 import trackEmbed from "../embeds/track/track.js";
 import logger from "../logger.js";
@@ -8,7 +8,7 @@ import logger from "../logger.js";
 export default async function chatUpdates(bot: Client, channel: TextChannel) {
     const users = await CorreiosDB.all()
     users.map(async user => {
-        const instance = new LinkETrack()
+        const instance = new Magalu()
         // Pega o ID e o objeto de Códigos para cada usuário
         const { id, codigos } = user
         // Para cada código registrado, realiza a busca:

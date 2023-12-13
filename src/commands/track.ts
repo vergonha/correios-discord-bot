@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { Discord, Slash, SlashOption } from "discordx";
 import trackEmbed from "../embeds/track/track.js";
 import errorEmbed from "../embeds/track/error.js";
-import LinkETrack from "../utils/LinkETrack.js";
+import Magalu from "../utils/Magalu.js";
 
 @Discord()
 export class Rastrear {
@@ -20,7 +20,7 @@ export class Rastrear {
     ) {
         await interaction.deferReply({ ephemeral: true })
 
-        const instance = new LinkETrack()
+        const instance = new Magalu()
         const request = await instance.track(codigo)
 
         if(typeof request == "string") {

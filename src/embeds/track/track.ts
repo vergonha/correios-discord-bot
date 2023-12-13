@@ -15,7 +15,7 @@ export default function trackEmbed(rastreio: iRastreio, name: string): EmbedBuil
 
     const evento =  {
         "name": `Evento:`,
-        "value": `**Data**: ${data}\n**Horário**: ${hora}\n**Local**: ${local}\n**Status**: ${status}\n**Origem**: ${subStatus[0] || "Não há."}\n**Destino**: ${subStatus[1] || "Não há."}`
+        "value": `**Data**: ${data}\n**Horário**: ${hora}\n**Local**: ${local}\n**Status**: ${status}\n**Origem**: ${subStatus[0]}\n**Destino**: ${subStatus[1]}`
     }
 
     return new EmbedBuilder({

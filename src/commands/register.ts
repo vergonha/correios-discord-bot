@@ -6,10 +6,13 @@ import Magalu from "../utils/Magalu.js";
 import logger from "../logger.js";
 import successEmbed from "../embeds/register/success.js";
 import alreadyRegisteredEmbed from "../embeds/register/alreadyRegistered.js";
+import PacoteInvalidoException from "../exceptions/PacoteInvalidoException.js";
+import ServicoIndisponivelException from "../exceptions/ServicoIndisponivelException.js";
+import { handleExceptions } from "../exceptions/handler.js";
 
 @Discord()
 export class Rastrear {
-    @Slash({ name: "registrar", description: "Registra o seu código de rastreio no banco de dados!"})
+    @Slash({ name: "registrar", description: "Registra o seu código de rastreio no banco de dados!" })
     async rastrear(
         @SlashOption({
             description: "Código de rastreio da encomenda: ",
@@ -28,22 +31,18 @@ export class Rastrear {
         interaction: CommandInteraction
     ) {
         try {
-            await interaction.deferReply({ephemeral: true})
+            await interaction.deferReply({ ephemeral: true })
 
             const userID = interaction.user.id
             const user = await CorreiosDB.search(userID)
 
             // Checks if track code has already been registered
-            const duplicate = user?.codigos.some( _ => _.codigo === codigo)
-            if(duplicate == true) { return await interaction.followUp({embeds: [alreadyRegisteredEmbed()]}) }
+            const duplicate = user?.codigos.some(_ => _.codigo === codigo)
+            if (duplicate == true) { return await interaction.followUp({ embeds: [alreadyRegisteredEmbed()] }) }
 
 
             const instance = new Magalu()
             const request = await instance.track(codigo)
-
-            if(typeof request == "string") {
-                return await interaction.followUp({ embeds: [errorEmbed(request)] })
-            }
 
             const lastEvent = request.eventos[0]
             const time = `${lastEvent.data} ${lastEvent.hora}`
@@ -53,9 +52,9 @@ export class Rastrear {
                 ? await CorreiosDB.append(userID, nome, codigo, time)
                 : await CorreiosDB.create(userID, nome, codigo, time)
 
-            return await interaction.followUp({embeds: [successEmbed()]})
+            return await interaction.followUp({ embeds: [successEmbed()] })
         } catch (error) {
-            logger.error(error)
+            return handleExceptions(error, interaction)
         }
     }
 }

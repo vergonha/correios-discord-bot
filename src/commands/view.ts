@@ -5,6 +5,7 @@ import Magalu from "../utils/Magalu.js";
 import trackEmbed from "../embeds/track/track.js";
 import errorEmbed from "../embeds/track/error.js";
 import getCodes from "../utils/getCodes.js";
+import { handleExceptions } from "../exceptions/handler.js";
 
 @Discord()
 export class View {
@@ -19,15 +20,15 @@ export class View {
             return interaction.followUp("Código inválido!");
         }
 
-       
-        const instance = new Magalu()
-        const request = await instance.track(roleValue)
-        
-        if(typeof request == "string") {
-            return await interaction.followUp({ embeds: [errorEmbed(request)] })
-        }
 
-        return await interaction.followUp({ embeds: [trackEmbed(request, "Rastreio Próprio")] })
+        try {
+            const instance = new Magalu()
+            const request = await instance.track(roleValue)
+
+            return await interaction.followUp({ embeds: [trackEmbed(request, "Rastreio Próprio")] })
+        } catch (error) {
+            return handleExceptions(error, interaction)
+        }
     }
 
     @Slash({ description: "Rastreia um código já salvo no banco de dados.", name: "visualizar" })

@@ -25,8 +25,8 @@ export default class Magalu {
 
     // returns pageProps inside HTML
     parse = (html: string) => {
-        const parser = new JSDOM(html)  
-        const props = parser.window.document.querySelector('#__NEXT_DATA__');
+        const parser = new JSDOM(html)
+        const props = parser.window.document.querySelector('#__NEXT_DTA__');
 
         if (!props || props.textContent == null) { throw new ServicoIndisponivelException("Não foi possível encontrar os dados da página.") }
 
@@ -39,7 +39,7 @@ export default class Magalu {
     extract = (response: iMagaluResponse, code: string): iRastreio => {
         const { data } = response
 
-        if(!data.length){
+        if (!data.length) {
             throw new PacoteInvalidoException("Ainda não há atualização no pacote ou o código é inválido.")
         }
 
@@ -64,20 +64,19 @@ export default class Magalu {
         }
     }
 
-    track = async (code: string): Promise<string | iRastreio> => {
+    track = async (code: string): Promise<iRastreio> => {
         try {
             const response = await this.fetch(code)
 
             return response
         } catch (err) {
-            if(err instanceof PacoteInvalidoException)
-                return err.message
 
-            if(err instanceof ServicoIndisponivelException)
-                return err.message
-
+            if (err instanceof ServicoIndisponivelException) 
+                throw err
+            
             logger.error(err)
-            return "Ocorreu um erro inesperado."
+            throw err
+
         }
     }
 }

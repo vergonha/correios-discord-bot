@@ -11,30 +11,23 @@ export default async function chatUpdates(bot: Client, channel: TextChannel) {
         const instance = new Magalu()
         // Get the ID and the object of Codes for each user
         const { id, codigos } = user
-        codigos.map( async product => {
-            const request = await instance.track(product.codigo)
+        codigos.map(async product => {
+            try {
+                const request = await instance.track(product.codigo)
 
-            if(typeof request == "string") {
+                const { data, hora } = request.eventos[0]
+                const time = `${data} ${hora}`
 
-                // While the API is unstable, this line will be commented.
-                // logger.error("Houve um erro ao rastrear o código " + product.codigo)
-                return
-            }
+                // If the API has a different time from the database, then there is an update
+                if (time != product.ultimaAtualizacao) {
+                    // Updates the database with the new time
+                    await CorreiosDB.update(id, product.nome, product.codigo, time)
+                    await channel.send({ embeds: [trackEmbed(request, product.nome)], content: "Atualização no pacote!" })
 
-            const { data, hora } = request.eventos[0]
-            const time = `${data} ${hora}`
-
-            // If the API has a different time from the database, then there is an update
-            if (time != product.ultimaAtualizacao) {
-                // Updates the database with the new time
-                await CorreiosDB.update(id, product.nome, product.codigo, time)
-
-                try {
-                    await channel.send({embeds: [trackEmbed(request, product.nome)], content: "Atualização no pacote!"})
-                } catch (error) {
-                    logger.error(error)
                 }
-
+            } catch (error) {
+                // The logger already logs the error in the console and in the discord channel.
+                return
             }
         })
 

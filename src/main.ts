@@ -1,7 +1,7 @@
 import { dirname, importx } from "@discordx/importer";
 import { ChannelType, GuildChannel, Interaction, Message } from "discord.js";
 import { IntentsBitField } from "discord.js";
-import { Client } from "discordx";
+import { Client, Guild } from "discordx";
 import logger from "./logger.js";
 import connection from "./database/connection.js";
 import dotenv from 'dotenv'
@@ -15,7 +15,6 @@ export const bot = new Client({
         IntentsBitField.Flags.GuildMembers,
         IntentsBitField.Flags.GuildMessages,
     ],
-
     silent: true,
 
     simpleCommand: {
@@ -50,7 +49,7 @@ bot.on("messageCreate", (message: Message) => {
 
 async function run() {
     await importx(`${dirname(import.meta.url)}/{events,commands}/**/*.{ts,js}`);
-
+    
     if(!process.env.DISCORD_TOKEN) {
         logger.error("Token do Discord Bot não encontrado.")
         throw Error("Não foi possível encontrar o Token do Discord Bot no seu arquivo .env.");

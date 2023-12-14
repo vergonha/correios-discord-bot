@@ -1,4 +1,4 @@
-import CorreiosDB from "../database/operations";
+import CorreiosDB from "../database/operations.js";
 
 const getCodes = async (userId: string) => {
     const user = await CorreiosDB.search(userId)

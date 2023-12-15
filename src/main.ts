@@ -1,12 +1,16 @@
+import "reflect-metadata";
+
 import { dirname, importx } from "@discordx/importer";
 import { ChannelType, GuildChannel, Interaction, Message } from "discord.js";
 import { IntentsBitField } from "discord.js";
-import { Client, Guild } from "discordx";
+import { Client, DIService, Guild, tsyringeDependencyRegistryEngine } from "discordx";
 import logger from "./logger.js";
 import connection from "./database/connection.js";
 import dotenv from 'dotenv'
 import updates from "./routine/sendUpdates.js";
+import { container } from "tsyringe"
 
+DIService.engine = tsyringeDependencyRegistryEngine.setInjector(container);
 dotenv.config()
 
 export const bot = new Client({

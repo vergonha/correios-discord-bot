@@ -1,5 +1,5 @@
 import { Client, TextChannel } from "discord.js";
-import Magalu from "../utils/Magalu.js";
+import Magalu from "../services/Magalu/Magalu.js";
 import CorreiosDB from "../database/operations.js";
 import trackEmbed from "../embeds/track/track.js";
 import logger from "../logger.js";

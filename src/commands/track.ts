@@ -1,15 +1,21 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { Discord, Slash, SlashOption } from "discordx";
 import { handleExceptions } from "../exceptions/handler.js";
+import { injectable } from "tsyringe";
 import trackEmbed from "../embeds/track/track.js";
-import errorEmbed from "../embeds/track/error.js";
-import Magalu from "../utils/Magalu.js";
-import PacoteInvalidoException from "../exceptions/PacoteInvalidoException.js";
-import ServicoIndisponivelException from "../exceptions/ServicoIndisponivelException.js";
-import logger from "../logger.js";
+import RastreioProvider from "../services/Provider.js";
 
 @Discord()
+@injectable()
 export class Rastrear {
+
+    private readonly _service: RastreioProvider
+    
+    constructor(service: RastreioProvider) {
+        this._service = service
+    }
+
+
     @Slash({ name: "rastrear", description: "Rastreia sua encomenda pelo código de rastreio!" })
     async rastrear(
         @SlashOption({
@@ -24,9 +30,7 @@ export class Rastrear {
     ) {
         try {
             await interaction.deferReply({ ephemeral: true })
-
-            const instance = new Magalu()
-            const request = await instance.track(codigo)
+            const request = await this._service.track(codigo)
 
 
             return await interaction.followUp({ embeds: [trackEmbed(request, "Rastreio Anônimo")] })

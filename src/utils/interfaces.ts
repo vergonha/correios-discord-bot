@@ -1,4 +1,3 @@
-
 // "Evento" means "Event" in portuguese.
 export interface iEvento {
     data: string,

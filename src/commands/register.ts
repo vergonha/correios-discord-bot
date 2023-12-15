@@ -1,17 +1,22 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { Discord, Slash, SlashOption } from "discordx";
 import CorreiosDB from "../database/operations.js";
-import errorEmbed from "../embeds/track/error.js";
-import Magalu from "../utils/Magalu.js";
-import logger from "../logger.js";
+import { handleExceptions } from "../exceptions/handler.js";
+import { injectable } from "tsyringe";
 import successEmbed from "../embeds/register/success.js";
 import alreadyRegisteredEmbed from "../embeds/register/alreadyRegistered.js";
-import PacoteInvalidoException from "../exceptions/PacoteInvalidoException.js";
-import ServicoIndisponivelException from "../exceptions/ServicoIndisponivelException.js";
-import { handleExceptions } from "../exceptions/handler.js";
+import RastreioProvider from "../services/Provider.js";
+
 
 @Discord()
+@injectable()
 export class Rastrear {
+    private readonly _service: RastreioProvider
+    
+    constructor(service: RastreioProvider) {
+        this._service = service
+    }
+
     @Slash({ name: "registrar", description: "Registra o seu código de rastreio no banco de dados!" })
     async rastrear(
         @SlashOption({
@@ -41,8 +46,7 @@ export class Rastrear {
             if (duplicate == true) { return await interaction.followUp({ embeds: [alreadyRegisteredEmbed()] }) }
 
 
-            const instance = new Magalu()
-            const request = await instance.track(codigo)
+            const request = await this._service.track(codigo)
 
             const lastEvent = request.eventos[0]
             const time = `${lastEvent.data} ${lastEvent.hora}`

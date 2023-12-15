@@ -1,14 +1,20 @@
 import { ActionRowBuilder, CommandInteraction, MessageActionRowComponentBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
 import { Discord, SelectMenuComponent, Slash } from "discordx";
-import CorreiosDB from "../database/operations.js";
-import Magalu from "../utils/Magalu.js";
-import trackEmbed from "../embeds/track/track.js";
-import errorEmbed from "../embeds/track/error.js";
-import getCodes from "../utils/getCodes.js";
 import { handleExceptions } from "../exceptions/handler.js";
+import { injectable } from "tsyringe"
+import trackEmbed from "../embeds/track/track.js";
+import getCodes from "../utils/getCodes.js";
+import RastreioProvider from "../services/Provider.js";
 
 @Discord()
+@injectable()
 export class View {
+
+    private readonly _service: RastreioProvider
+    
+    constructor(service: RastreioProvider) {
+        this._service = service
+    }
 
     @SelectMenuComponent({ id: "view-menu" })
     async handle(interaction: StringSelectMenuInteraction): Promise<unknown> {
@@ -22,9 +28,7 @@ export class View {
 
 
         try {
-            const instance = new Magalu()
-            const request = await instance.track(roleValue)
-
+            const request = await this._service.track(roleValue)
             return await interaction.followUp({ embeds: [trackEmbed(request, "Rastreio Próprio")] })
         } catch (error) {
             return handleExceptions(error, interaction)

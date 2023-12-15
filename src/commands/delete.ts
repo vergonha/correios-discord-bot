@@ -1,11 +1,10 @@
 import { ActionRowBuilder, CommandInteraction, MessageActionRowComponentBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
 import { Discord, SelectMenuComponent, Slash } from "discordx";
-import CorreiosDB from "../database/operations.js";
 import getCodes from "../utils/getCodes.js";
+import CorreiosDB from "../database/operations.js";
 
 @Discord()
 export class Delete {
-
     @SelectMenuComponent({ id: "delete-menu" })
     async handle(interaction: StringSelectMenuInteraction): Promise < unknown > {
         await interaction.deferReply({ ephemeral: true });

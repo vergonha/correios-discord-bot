@@ -21,6 +21,8 @@
     "jsdom": "^23.0.1",
     "moment": "^2.29.4",
     "mongoose": "^8.0.3",
+    "reflect-metadata": "^0.2.0",
+    "tsyringe": "^4.8.0",
     "winston": "^3.11.0",
     "winston-transport": "^4.6.0"
   },

@@ -1,15 +1,32 @@
 import { JSDOM } from "jsdom"
-import { iMagaluResponse, iRastreio } from "./interfaces"
+import { iMagaluResponse, iRastreio } from "../../utils/interfaces.js"
 import axios, { isAxiosError } from "axios"
-import ServicoIndisponivelException from "../exceptions/ServicoIndisponivelException.js"
-import PacoteInvalidoException from "../exceptions/PacoteInvalidoException.js"
-import logger from "../logger.js"
+import ServicoIndisponivelException from "../../exceptions/ServicoIndisponivelException.js"
+import PacoteInvalidoException from "../../exceptions/PacoteInvalidoException.js"
+import logger from "../../logger.js"
+import iProvider from "../iProvider.js"
 
-export default class Magalu {
+export default class Magalu implements iProvider {
     private readonly baseURL: string
 
     constructor() {
         this.baseURL = "https://rastreamento.magazineluiza.com.br/"
+    }
+
+    track = async (code: string): Promise<iRastreio> => {
+        try {
+            const response = await this.fetch(code)
+
+            return response
+        } catch (err) {
+
+            if (err instanceof ServicoIndisponivelException)
+                throw err
+
+            logger.error(err)
+            throw err
+
+        }
     }
 
     fetch = async (code: string): Promise<iRastreio> => {
@@ -26,7 +43,7 @@ export default class Magalu {
     // returns pageProps inside HTML
     parse = (html: string) => {
         const parser = new JSDOM(html)
-        const props = parser.window.document.querySelector('#__NEXT_DTA__');
+        const props = parser.window.document.querySelector('#__NEXT_DATA__');
 
         if (!props || props.textContent == null) { throw new ServicoIndisponivelException("Não foi possível encontrar os dados da página.") }
 
@@ -64,19 +81,5 @@ export default class Magalu {
         }
     }
 
-    track = async (code: string): Promise<iRastreio> => {
-        try {
-            const response = await this.fetch(code)
 
-            return response
-        } catch (err) {
-
-            if (err instanceof ServicoIndisponivelException) 
-                throw err
-            
-            logger.error(err)
-            throw err
-
-        }
-    }
 }

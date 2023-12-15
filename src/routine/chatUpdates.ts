@@ -1,14 +1,13 @@
 import { Client, TextChannel } from "discord.js";
-import Magalu from "../services/Magalu/Magalu.js";
 import CorreiosDB from "../database/operations.js";
 import trackEmbed from "../embeds/track/track.js";
-import logger from "../logger.js";
+import RastreioProvider from "../services/Provider.js";
 
 // This function maps all users registered in the database and tracks the registered codes.
 export default async function chatUpdates(bot: Client, channel: TextChannel) {
     const users = await CorreiosDB.all()
     users.map(async user => {
-        const instance = new Magalu()
+        const instance = new RastreioProvider()
         // Get the ID and the object of Codes for each user
         const { id, codigos } = user
         codigos.map(async product => {

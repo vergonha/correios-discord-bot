@@ -59,6 +59,11 @@ async function run() {
         throw Error("Não foi possível encontrar o Token do Discord Bot no seu arquivo .env.");
     }
 
+    if(!process.env.SHOPEE_COOKIE) {
+        logger.error("Cookie da Shopee não encontrado, encomendas desse tipo não serão rastreadas.")
+
+    }
+
     await bot.login(process.env.DISCORD_TOKEN);
 }
 

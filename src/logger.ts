@@ -14,7 +14,7 @@ const timezone = () => {
 
 const logger = winston.createLogger({
     level: "debug",
-    format: combine(label({ label: '✍️' }), timestamp({ format:timezone }), customFormat),
+    format: combine(label({ label: '🚨' }), timestamp({ format:timezone }), customFormat),
 
     transports: [
         new winston.transports.Console(),

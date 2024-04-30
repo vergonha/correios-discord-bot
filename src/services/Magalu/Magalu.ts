@@ -1,5 +1,6 @@
 import { JSDOM } from "jsdom"
-import { iMagaluResponse, iRastreio } from "../../utils/interfaces.js"
+import { iMagaluResponse } from "./interfaces/iMagaluResponse.js"
+import { iRastreio } from "../../utils/interfaces.js"
 import axios, { isAxiosError } from "axios"
 import ServicoIndisponivelException from "../../exceptions/ServicoIndisponivelException.js"
 import PacoteInvalidoException from "../../exceptions/PacoteInvalidoException.js"
@@ -23,7 +24,6 @@ export default class Magalu implements iProvider {
             if (err instanceof ServicoIndisponivelException)
                 throw err
 
-            logger.error(err)
             throw err
 
         }

@@ -1,7 +1,11 @@
 <h1 align="center"><img src="./assets/discord.png" width="30px"> [Discord] Correios Bot <img src="./assets/discord.png" width="30px"></h1>
+<h1 align="center"><img src="./assets/correios.png" width="200px"></h1>
 
 <p align="center">Rastreie e Receba Atualizações em Tempo Real de seus Pacotes! 📦</p>
-<h1 align="center"><img src="./assets/correios.png" width="200px"></h1>
+
+<h1 align="center"><img src="https://i.imgur.com/L3ntrmM.png"></h1>
+
+
 <p align="center">Projeto e Documentação ainda em construção. ⚠️</p>
 
 ## 👤 Sobre o Projeto

@@ -2,9 +2,9 @@
 export interface iEvento {
     data: string,
     hora: string,
-    local: string,
+    local: string | undefined,
     status: string,
-    subStatus: string[]
+    subStatus: string[] | undefined
 }
 
 // "Rastreio" means "Tracking" in portuguese.

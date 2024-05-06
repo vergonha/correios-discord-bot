@@ -23,20 +23,20 @@ export default class Shopee implements iProvider {
             throw new PacoteInvalidoException("Ainda não há atualização no pacote ou o código é inválido.")
         }
 
-        const updateDate = moment(data.shipping.tracking_info.ctime * 1000)
+        const updateDate = (n: number) => moment(n * 1000)
         
         return {
-            codigo: data.shipping.tracking_number,
-            time: data.shipping.tracking_info.ctime,
-            eventos: [
-                {
-                    data: updateDate.format("DD/MM/YYYY"),
-                    hora: updateDate.format("HH:mm"),
-                    local: "Indisponível em rastreio tipo SHOPEE",
-                    status: data.shipping.tracking_info.description,
-                    subStatus: ["Indisponível", "Indisponível"],
+            codigo: data.pc_shipping.forder_shipping_info_list[0].tracking_number,
+            time: data.pc_shipping.forder_shipping_info_list[0].tracking_info_list[0].ctime,
+            eventos: data.pc_shipping.forder_shipping_info_list[0].tracking_info_list.map(event => {
+                return                 {
+                    data: updateDate(event.ctime).format("DD/MM/YYYY"),
+                    hora: updateDate(event.ctime).format("HH:mm"),
+                    local: undefined,
+                    status: event.description,
+                    subStatus: undefined,
                 }
-            ]
+            })
         }
     }
 
@@ -45,7 +45,8 @@ export default class Shopee implements iProvider {
         const response = await fetch(`${this.baseURL}?${params}`, {
             headers: {
                 "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-                "cookie": this.cookie
+                "cookie": this.cookie,
+                "x-api-source": "pc"
             }
         })
 

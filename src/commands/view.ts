@@ -5,6 +5,7 @@ import { injectable } from "tsyringe"
 import trackEmbed from "../embeds/track/track.js";
 import getCodes from "../utils/getCodes.js";
 import RastreioProvider from "../services/Provider.js";
+import recordsEmbed from "../components/records.js";
 
 @Discord()
 @injectable()
@@ -29,7 +30,9 @@ export class View {
 
         try {
             const request = await this._service.track(roleValue)
-            return await interaction.followUp({ embeds: [trackEmbed(request, "Rastreio Próprio")] })
+            return await interaction.followUp({ embeds: [trackEmbed(request, "Rastreio Próprio")], components: [new ActionRowBuilder<StringSelectMenuBuilder>({
+                components: [recordsEmbed(request, "Rastreio Próprio").toJSON()]
+            })] })
         } catch (error) {
             return handleExceptions(error, interaction)
         }

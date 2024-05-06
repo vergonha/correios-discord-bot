@@ -1,9 +1,10 @@
-import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import { ActionRow, ActionRowBuilder, ApplicationCommandOptionType, BaseSelectMenuBuilder, CommandInteraction, StringSelectMenuBuilder } from "discord.js";
 import { Discord, Slash, SlashOption } from "discordx";
 import { handleExceptions } from "../exceptions/handler.js";
 import { injectable } from "tsyringe";
 import trackEmbed from "../embeds/track/track.js";
 import RastreioProvider from "../services/Provider.js";
+import recordsEmbed from "../components/records.js";
 
 @Discord()
 @injectable()
@@ -33,7 +34,9 @@ export class Rastrear {
             const request = await this._service.track(codigo)
 
 
-            return await interaction.followUp({ embeds: [trackEmbed(request, "Rastreio Anônimo")] })
+            return await interaction.followUp({ embeds: [trackEmbed(request, "Rastreio Anônimo")], components: [new ActionRowBuilder<StringSelectMenuBuilder>({
+                components: [recordsEmbed(request, "Rastreio Anônimo").toJSON()]
+            })] })
         } catch (error) {
             return handleExceptions(error, interaction)
         }

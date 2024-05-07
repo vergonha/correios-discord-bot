@@ -1,7 +1,8 @@
-import { Client, TextChannel } from "discord.js";
+import { ActionRowBuilder, Client, StringSelectMenuBuilder, TextChannel } from "discord.js";
 import CorreiosDB from "../database/operations.js";
 import trackEmbed from "../embeds/track/track.js";
 import RastreioProvider from "../services/Provider.js";
+import recordsEmbed from "../components/records.js";
 
 // This function maps all users registered in the database and tracks the registered codes.
 export default async function chatUpdates(bot: Client, channel: TextChannel) {
@@ -21,7 +22,9 @@ export default async function chatUpdates(bot: Client, channel: TextChannel) {
                 if (time != product.ultimaAtualizacao) {
                     // Updates the database with the new time
                     await CorreiosDB.update(id, product.nome, product.codigo, time)
-                    await channel.send({ embeds: [trackEmbed(request, product.nome)], content: "Atualização no pacote!" })
+                    await channel.send({ embeds: [trackEmbed(request, product.nome)], content: "Atualização no pacote!" , components: [new ActionRowBuilder<StringSelectMenuBuilder>({
+                        components: [recordsEmbed(request, "Rastreio Anônimo").toJSON()]
+                    })] })
 
                 }
             } catch (error) {

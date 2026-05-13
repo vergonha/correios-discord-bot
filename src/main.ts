@@ -3,68 +3,84 @@ import "reflect-metadata";
 import { dirname, importx } from "@discordx/importer";
 import { ChannelType, GuildChannel, Interaction, Message } from "discord.js";
 import { IntentsBitField } from "discord.js";
-import { Client, DIService, Guild, tsyringeDependencyRegistryEngine } from "discordx";
+import {
+  Client,
+  DIService,
+  Guild,
+  tsyringeDependencyRegistryEngine,
+} from "discordx";
 import logger from "./logger.js";
 import connection from "./database/connection.js";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 import updates from "./routine/sendUpdates.js";
-import { container } from "tsyringe"
+import { container } from "tsyringe";
 
 DIService.engine = tsyringeDependencyRegistryEngine.setInjector(container);
-dotenv.config()
+dotenv.config();
 
 export const bot = new Client({
-    intents: [
-        IntentsBitField.Flags.Guilds,
-        IntentsBitField.Flags.GuildMembers,
-        IntentsBitField.Flags.GuildMessages,
-    ],
-    silent: true,
+  intents: [
+    IntentsBitField.Flags.Guilds,
+    IntentsBitField.Flags.GuildMembers,
+    IntentsBitField.Flags.GuildMessages,
+  ],
+  silent: true,
 
-    simpleCommand: {
-        prefix: "!",
-    },
+  simpleCommand: {
+    prefix: "!",
+  },
 });
 
-
 bot.once("ready", async () => {
+  // Make sure all guilds are cached
+  // await bot.guilds.fetch();
 
+  // Synchronize applications commands with Discord
+  await bot.initApplicationCommands();
 
-    // Make sure all guilds are cached
-    // await bot.guilds.fetch();
+  connection();
+  logger.info("everyday i imagine a future where i can be with you 🌸");
 
-    // Synchronize applications commands with Discord
-    await bot.initApplicationCommands();
-
-    connection()
-    logger.info("everyday i imagine a future where i can be with you 🌸");
-
-    // Function to send package updates every 5 minutes.
-    setInterval(async () => {updates(bot)}, 2 * 60 * 1000 /* 5 x 60 seconds x 1000 ms == 5 minutes */ )
+  // Function to send package updates every 5 minutes.
+  setInterval(
+    async () => {
+      updates(bot);
+    },
+    2 * 60 * 1000 /* 5 x 60 seconds x 1000 ms == 5 minutes */,
+  );
 });
 
 bot.on("interactionCreate", (interaction: Interaction) => {
-    bot.executeInteraction(interaction);
+  bot.executeInteraction(interaction);
 });
 
 bot.on("messageCreate", (message: Message) => {
-    bot.executeCommand(message);
+  bot.executeCommand(message);
 });
 
 async function run() {
-    await importx(`${dirname(import.meta.url)}/{events,commands}/**/*.{ts,js}`);
-    
-    if(!process.env.DISCORD_TOKEN) {
-        logger.error("Token do Discord Bot não encontrado.")
-        throw Error("Não foi possível encontrar o Token do Discord Bot no seu arquivo .env.");
-    }
+  await importx(`${dirname(import.meta.url)}/{events,commands}/**/*.{ts,js}`);
 
-    if(!process.env.SHOPEE_COOKIE) {
-        logger.error("Cookie da Shopee não encontrado, encomendas desse tipo não serão rastreadas.")
+  if (!process.env.DISCORD_TOKEN) {
+    logger.error("Token do Discord Bot não encontrado.");
+    throw Error(
+      "Não foi possível encontrar o Token do Discord Bot no seu arquivo .env.",
+    );
+  }
 
-    }
+  if (!process.env.SHOPEE_COOKIE) {
+    logger.error(
+      "Cookie da Shopee não encontrado, encomendas desse tipo não serão rastreadas.",
+    );
+  }
 
-    await bot.login(process.env.DISCORD_TOKEN);
+  if (!process.env.NTFY_SLUG) {
+    logger.info(
+      "📱Endereço do Ntfy não encontrado no .env. Notificações push não serão habilitadas.",
+    );
+  }
+
+  await bot.login(process.env.DISCORD_TOKEN);
 }
 
 run();

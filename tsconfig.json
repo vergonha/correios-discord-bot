@@ -2,17 +2,24 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "outDir": "build",
+
+    "moduleResolution": "Bundler",
+
+    "outDir": "dist",
     "rootDir": "src",
+
     "strict": true,
-    "moduleResolution": "Node",
+
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
 
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
 
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+
+    "types": ["bun-types"]
   },
-  "exclude": ["build", "node_modules"]
+  "exclude": ["dist", "node_modules"]
 }

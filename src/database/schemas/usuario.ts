@@ -1,40 +1,61 @@
-import { Schema } from "mongoose";
-import mongoose from "mongoose";
+import { Association, DataTypes, Model } from "sequelize";
+import { sequelize } from "../connection.js";
 
-const ProdutoSchema = new Schema({
-    nome: {
-        type: String,
-        required: true,
-    },
+class Usuario extends Model {
+  declare public id: number;
+  declare codigos: Produto[]; 
 
-    codigo: {
-        type: String,
-        required: true
-    },
+  declare static associations: {
+    codigos: Association<Usuario, Produto>;
+  };
+}
 
-    ultimaAtualizacao: {
-        type: String,
-        required: true
-    }
-})
+class Produto extends Model {
+  declare public id: number;
+  declare public usuarioId: number;
+  declare public nome: string;
+  declare public codigo: string;
+  declare public ultimaAtualizacao: string;
+}
 
-const UsuarioSchema = new Schema({
+Usuario.init(
+  {
     id: {
-        type: Number,
-        required: true,
-        index: {
-            unique: true,
-            dropDups: true
-        }
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      allowNull: false,
     },
+  },
+  {
+    sequelize,
+    modelName: "usuario",
+    timestamps: false,
+  }
+);
 
-    codigos: {
-        type: [ProdutoSchema],
-        required: true
-    }
-})
+Produto.init(
+  {
+    nome: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    codigo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    ultimaAtualizacao: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: "produto",
+    timestamps: false,
+  }
+);
 
-const Usuario = mongoose.model("usuario", UsuarioSchema)
-Usuario.createIndexes()
+Usuario.hasMany(Produto, { as: "codigos", foreignKey: "usuarioId", onDelete: "CASCADE" });
+Produto.belongsTo(Usuario, { foreignKey: "usuarioId" });
 
-export default Usuario
+export { Usuario, Produto };

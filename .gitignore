@@ -9,6 +9,10 @@ bun.lock
 # folders
 build
 node_modules
+dist
 
 #logs
 *.log
+
+# db 
+database.sqlite

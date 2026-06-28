@@ -6,6 +6,7 @@ import { injectable } from "tsyringe";
 import successEmbed from "../embeds/register/success.js";
 import alreadyRegisteredEmbed from "../embeds/register/alreadyRegistered.js";
 import RastreioProvider from "../services/Provider.js";
+import logger from "../logger.js";
 
 
 @Discord()
@@ -50,7 +51,6 @@ export class Rastrear {
 
             const lastEvent = request.eventos[0]
             const time = `${lastEvent.data} ${lastEvent.hora}`
-
 
             user
                 ? await CorreiosDB.append(userID, nome, codigo, time)

@@ -1,9 +1,7 @@
 import winston, { format } from "winston";
 import DiscordHook from "./utils/LoggerDiscordWebhook.js";
-import dotenv from 'dotenv'
 const { combine, label, printf, timestamp } = format
 
-dotenv.config()
 const customFormat = printf(({ level, message, label, timestamp }) => {
     return `${timestamp} [${label}] ${level}: ${message}`;
 });

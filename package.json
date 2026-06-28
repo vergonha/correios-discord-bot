@@ -7,7 +7,7 @@
   "main": "dist/main.js",
   "scripts": {
     "dev": "bun run --watch src/main.ts",
-    "build": "bun build ./src/main.ts --target=bun --outdir ./dist --packages=external",
+    "build": "tsc --project tsconfig.json",
     "start": "bun run dist/main.js",
     "clean": "rm -rf dist",
     "build:changelog": "bunx @discordx/changelog --src src"
@@ -18,11 +18,11 @@
     "correios-bot": ".",
     "discord.js": "^14.14.1",
     "discordx": "^11.9.0",
-    "dotenv": "^16.3.1",
     "jsdom": "^23.0.1",
     "moment": "^2.29.4",
-    "mongoose": "^8.0.3",
     "reflect-metadata": "^0.2.0",
+    "sequelize": "^6.37.8",
+    "sqlite3": "^6.0.1",
     "tsyringe": "^4.8.0",
     "winston": "^3.11.0",
     "winston-transport": "^4.6.0"

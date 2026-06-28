@@ -1,86 +1,81 @@
-import "reflect-metadata";
+import "reflect-metadata"
 
-import { dirname, importx } from "@discordx/importer";
-import { ChannelType, GuildChannel, Interaction, Message } from "discord.js";
-import { IntentsBitField } from "discord.js";
-import {
-  Client,
-  DIService,
-  Guild,
-  tsyringeDependencyRegistryEngine,
-} from "discordx";
-import logger from "./logger.js";
-import connection from "./database/connection.js";
-import dotenv from "dotenv";
-import updates from "./routine/sendUpdates.js";
+import { Events, IntentsBitField } from "discord.js";
+import { Client, DIService, tsyringeDependencyRegistryEngine } from "discordx";
+import connection from "./database/connection";
+import logger from "./logger";
+import updates from "./routine/sendUpdates";
+import { importx } from "@discordx/importer";
+import { dirname } from "path";
 import { container } from "tsyringe";
+import { fileURLToPath } from "url";
 
 DIService.engine = tsyringeDependencyRegistryEngine.setInjector(container);
-dotenv.config();
 
-export const bot = new Client({
-  intents: [
-    IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.GuildMembers,
-    IntentsBitField.Flags.GuildMessages,
-  ],
-  silent: true,
+export class Main {
+    private static client: Client;
 
-  simpleCommand: {
-    prefix: "!",
-  },
-});
+    static async start(): Promise<void> {
+        Main.client = new Client({
+            intents: [
+                IntentsBitField.Flags.Guilds,
+                IntentsBitField.Flags.GuildMembers,
+                IntentsBitField.Flags.GuildMessages,
+            ],
+            silent: !!process.env.DISCORDX_SILENT
+        })
 
-bot.once("ready", async () => {
-  // Make sure all guilds are cached
-  // await bot.guilds.fetch();
+        Main.client.once(Events.ClientReady, () => {
 
-  // Synchronize applications commands with Discord
-  await bot.initApplicationCommands();
+            if (!!process.env.DISCORDX_CLEAR) {
+                logger.info("limpando application commands... 🌸");
+                Main.client.clearApplicationCommands(
+                    ...Main.client.guilds.cache.map((guild) => guild.id)
+                );
+            }
 
-  connection();
-  logger.info("everyday i imagine a future where i can be with you 🌸");
+            void Main.client.initApplicationCommands();
 
-  // Function to send package updates every 5 minutes.
-  setInterval(
-    async () => {
-      updates(bot);
-    },
-    2 * 60 * 1000 /* 5 x 60 seconds x 1000 ms == 5 minutes */,
-  );
-});
+            connection();
+            logger.info("everyday i imagine a future where i can be with you 🌸");
 
-bot.on("interactionCreate", (interaction: Interaction) => {
-  bot.executeInteraction(interaction);
-});
+            // Function to send package updates every 5 minutes.
+            setInterval(
+                async () => {
+                    updates(Main.client);
+                },
+                2 * 60 * 1000 /* 5 x 60 seconds x 1000 ms == 5 minutes */,
+            );
+        })
 
-bot.on("messageCreate", (message: Message) => {
-  bot.executeCommand(message);
-});
+        Main.client.on(Events.InteractionCreate, (interaction) => {
+            Main.client.executeInteraction(interaction);
+        })
 
-async function run() {
-  await importx(`${dirname(import.meta.url)}/{events,commands}/**/*.{ts,js}`);
+        const __dirname = dirname(fileURLToPath(import.meta.url));
+        await importx(`${__dirname}/commands/**/*.{js,ts}`);
 
-  if (!process.env.DISCORD_TOKEN) {
-    logger.error("Token do Discord Bot não encontrado.");
-    throw Error(
-      "Não foi possível encontrar o Token do Discord Bot no seu arquivo .env.",
-    );
-  }
+        if (!process.env.DISCORD_TOKEN) {
+            logger.error("Token do Discord Bot não encontrado.");
+            throw Error(
+                "Não foi possível encontrar o Token do Discord Bot no seu arquivo .env.",
+            );
+        }
 
-  if (!process.env.SHOPEE_COOKIE) {
-    logger.error(
-      "Cookie da Shopee não encontrado, encomendas desse tipo não serão rastreadas.",
-    );
-  }
+        if (!process.env.SHOPEE_COOKIE) {
+            logger.error(
+                "Cookie da Shopee não encontrado, encomendas desse tipo não serão rastreadas.",
+            );
+        }
 
-  if (!process.env.NTFY_SLUG) {
-    logger.info(
-      "📱Endereço do Ntfy não encontrado no .env. Notificações push não serão habilitadas.",
-    );
-  }
+        if (!process.env.NTFY_SLUG) {
+            logger.info(
+                "📱Endereço do Ntfy não encontrado no .env. Notificações push não serão habilitadas.",
+            );
+        }
 
-  await bot.login(process.env.DISCORD_TOKEN);
+        await Main.client.login(process.env.DISCORD_TOKEN);
+    }
 }
 
-run();
+void Main.start()

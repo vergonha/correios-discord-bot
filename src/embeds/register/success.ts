@@ -1,7 +1,5 @@
 import { EmbedBuilder } from "@discordjs/builders";
-import dotenv from 'dotenv'
 
-dotenv.config()
 export default function successEmbed(): EmbedBuilder{
 
     const updateChannel = process.env.UPDATES_CHANNEL ?  `<#${process.env.UPDATES_CHANNEL}>` : "Você näo configurou"

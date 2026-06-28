@@ -1,30 +1,23 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+import { Sequelize } from "sequelize";
+import path from "path";
 import logger from "../logger.js";
-import { setServers } from "node:dns/promises";
 
-setServers(["1.1.1.1", "8.8.8.8"]);
-dotenv.config();
+const sequelize = new Sequelize({
+  dialect: "sqlite",
+  storage: path.resolve(process.cwd(), "database.sqlite"),
+  logging: false,
+});
 
-const connectionString = process.env.MONGODB_CONNECTION_STRING;
-export default function connection() {
-  if (!connectionString) {
-    logger.error(
-      "🍂 Verifique se o seu arquivo .ENV está preenchido corretamente.",
-    );
+export default async function connection() {
+  try {
+    await sequelize.authenticate();
+    await sequelize.sync();
+    logger.info("🌿 Conexão com a database SQLite estabelecida.");
+  } catch (err: any) {
+    logger.error("🍂 Erro ao estabelecer conexão com a database SQLite.");
+    logger.error(err.message);
     process.exit();
   }
-
-  mongoose
-    .connect(connectionString)
-    .then((_) => {
-      logger.info("🌿 Conexão com a database estabelecida.");
-    })
-    .catch((err) => {
-      logger.error(
-        "🍂 Erro ao estabelecer conexão com a database | Verifique se a String de conexão com o MongoDB é válida.",
-      );
-      logger.error(err.message);
-      process.exit();
-    });
 }
+
+export { sequelize };

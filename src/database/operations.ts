@@ -1,84 +1,95 @@
-import Usuario from "./schemas/usuario.js";
-import connection from "./connection.js";
+import logger from "../logger.js";
+import { Usuario, Produto } from "./schemas/usuario.js";
 
-const CorreiosDB = {
-    create: async (id: string, name: string, code: string, time: string) => {
-        const user = new Usuario({
-            id: id,
-            codigos: {
-                nome: name,
-                codigo: code,
-                ultimaAtualizacao: time
-            }
-        })
-
-        return await user.save()
-    },
-
-    append: async (id: string, name: string, code: string, time: string) => {
-        return await Usuario.findOneAndUpdate(
-            {id: id},
-            {
-                $push: {
-                    codigos: {
-                        nome: name,
-                        codigo: code,
-                        ultimaAtualizacao: time
-                    }
-                }
-            }
-        )
-    },
-
-    update: async (id: string, name: string, code: string, time: string) => {
-        return await Usuario.findOneAndUpdate(
-            {
-                id: id,
-                codigos: {
-                    $elemMatch: {
-                        codigo: code
-                    }
-                }
-            },
-            {
-                $set: {
-                    "codigos.$.nome": name,
-                    "codigos.$.ultimaAtualizacao": time,
-                    "codigos.$.codigo": code
-                }
-            }
-        )
-    },
-
-    delete: async (id: string, code: string) => {
-        return await Usuario.updateOne(
-            {
-                id: id,
-                codigos: {
-                    $elemMatch: {
-                        codigo: code
-                    }
-                }
-            },
-            {
-                $pull: {
-                    codigos: {
-                        codigo: code
-                    }
-                }
-            }, { new: true }
-        )
-    },
-
-    search: async (id: string) => {
-        const user = await Usuario.findOne({id: id})
-        return user
-    },
-
-    all: async () => {
-        return Usuario.find({})
-    }
+export interface IProduto {
+  id: number;
+  usuarioId: number;
+  nome: string;
+  codigo: string;
+  ultimaAtualizacao: string;
 }
 
+export interface IUsuario {
+  id: string; 
+  codigos: IProduto[];
+}
 
-export default CorreiosDB
+const CorreiosDB = {
+  create: async (id: string, name: string, code: string, time: string) => {
+    await Usuario.findOrCreate({
+      where: { id: id }
+    });
+
+    return await Produto.create({
+      usuarioId: id,
+      nome: name,
+      codigo: code,
+      ultimaAtualizacao: time,
+    });
+  },
+
+  append: async (id: string, name: string, code: string, time: string) => {
+    return await Produto.create({
+      usuarioId: id,
+      nome: name,
+      codigo: code,
+      ultimaAtualizacao: time,
+    });
+  },
+
+  update: async (id: string, name: string, code: string, time: string) => {
+    return await Produto.update(
+      {
+        nome: name,
+        ultimaAtualizacao: time,
+      },
+      {
+        where: {
+          usuarioId: id,
+          codigo: code,
+        },
+      }
+    );
+  },
+
+  delete: async (id: string, code: string) => {
+    return await Produto.destroy({
+      where: {
+        usuarioId: id,
+        codigo: code,
+      },
+    });
+  },
+
+search: async (id: string): Promise<IUsuario | null> => {
+  const user = await Usuario.findOne({
+    where: { id },
+    include: [{ model: Produto, as: "codigos" }],
+  });
+
+  if (!user) return null;
+
+  const userData = user.get({ plain: true }) as any;
+  
+  return {
+    id: userData.id.toString(),
+    codigos: userData.codigos || [],
+  };
+},
+
+all: async (): Promise<IUsuario[]> => {
+  const users = await Usuario.findAll({
+    include: [{ model: Produto, as: "codigos" }],
+  });
+  
+  return users.map((user) => {
+    const userData = user.get({ plain: true }) as any;
+    return {
+      id: userData.id.toString(),
+      codigos: userData.codigos || [],
+    };
+  });
+}
+};
+
+export default CorreiosDB;

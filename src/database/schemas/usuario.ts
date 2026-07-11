@@ -2,8 +2,8 @@ import { Association, DataTypes, Model } from "sequelize";
 import { sequelize } from "../connection.js";
 
 class Usuario extends Model {
-  declare public id: number;
-  declare codigos: Produto[]; 
+  declare public id: string;
+  declare codigos: Produto[];
 
   declare static associations: {
     codigos: Association<Usuario, Produto>;
@@ -11,8 +11,8 @@ class Usuario extends Model {
 }
 
 class Produto extends Model {
-  declare public id: number;
-  declare public usuarioId: number;
+  declare public id: string;
+  declare public usuarioId: string;
   declare public nome: string;
   declare public codigo: string;
   declare public ultimaAtualizacao: string;
@@ -21,7 +21,7 @@ class Produto extends Model {
 Usuario.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       primaryKey: true,
       allowNull: false,
     },
@@ -35,6 +35,16 @@ Usuario.init(
 
 Produto.init(
   {
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      allowNull: false,
+      defaultValue: DataTypes.UUIDV4
+    },
+    usuarioId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     nome: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -55,7 +65,11 @@ Produto.init(
   }
 );
 
-Usuario.hasMany(Produto, { as: "codigos", foreignKey: "usuarioId", onDelete: "CASCADE" });
+Usuario.hasMany(Produto, {
+  as: "codigos",
+  foreignKey: "usuarioId",
+  onDelete: "CASCADE",
+});
 Produto.belongsTo(Usuario, { foreignKey: "usuarioId" });
 
 export { Usuario, Produto };
